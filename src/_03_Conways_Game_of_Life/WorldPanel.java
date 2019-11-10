@@ -19,7 +19,7 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 	private Timer timer;
 	
 	//1. Create a 2D array of Cells. Do not initialize it.
-
+	Cell [][] cells;
 	
 	
 	public WorldPanel(int w, int h, int cpr) {
@@ -29,25 +29,47 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 		this.cellsPerRow = cpr;
 	
 		//2. Calculate the cell size.
-		
+		cellSize = w / cellsPerRow;
 		//3. Initialize the cell array to the appropriate size.
-		
+		cells = new Cell[cellSize][cellSize];
 		//3. Iterate through the array and initialize each cell.
 		//   Don't forget to consider the cell's dimensions when 
 		//   passing in the location.
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				cells[i][j] = new Cell(i, j, cellSize);
+			}
+		}
 		
 	}
 	
 	public void randomizeCells() {
 		//4. Iterate through each cell and randomly set each
 		//   cell's isAlive memeber to true of false
+		Random random = new Random();
+		int ad = random.nextInt(2);
+		Boolean AD;
+		if (ad == 1) {
+			AD = true;
+		} else {
+			AD = false;
+		}
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				cells[i][j].isAlive = AD;
+			}
+		}
 		
 		repaint();
 	}
 	
 	public void clearCells() {
 		//5. Iterate through the cells and set them all to dead.
-		
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				cells[i][j].isAlive = false;
+			}
+		}
 		repaint();
 	}
 	
@@ -66,12 +88,17 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 	@Override
 	public void paintComponent(Graphics g) {
 		//6. Iterate through the cells and draw them all
-		
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				g.setColor(Color.RED);
+				g.fillRect(cells[i][j].getX() * cellSize, cells[i][j].getY() * cellSize, cellSize, cellSize);
+				g.setColor(Color.BLACK);
+				g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+			}
+		}
 		
 		
 		// draws grid
-		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 	}
 	
 	//advances world one step
@@ -80,11 +107,14 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 		// . using the getLivingNeighbors method.
 		int[][] livingNeighbors = new int[cellsPerRow][cellsPerRow];
 		
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				livingNeighbors[i][j] = getLivingNeighbors(i, j);
+				cells[i][j].liveOrDie(getLivingNeighbors(i, j));
+			}
+		}
 		//8. check if each cell should live or die
 	
-		
-		
-		
 		repaint();
 	}
 	
@@ -93,7 +123,148 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 	//   living neighbors there are of the 
 	//   cell identified by x and y
 	public int getLivingNeighbors(int x, int y){
-		return 0;
+		int neighbors = 0;
+		if(cells[x][y].getX() == 0 && cells[x][y].getY() == 0) {
+			if(cells[x + 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getX() == cellSize * cellsPerRow  && cells[x][y].getY() == 0) {
+			if(cells[x][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getX() == 0  && cells[x][y].getY() == cellSize * cellsPerRow) {
+			if(cells[x + 1][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getX() == cellSize * cellsPerRow  && cells[x][y].getY() == cellSize * cellsPerRow) {
+			if(cells[x - 1][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getX() == 0) {
+			
+			if(cells[x + 1][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y + 1].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getX() == cellSize * cellsPerRow) {
+			
+			if(cells[x - 1][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y + 1].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getY() == 0) {
+			
+			if(cells[x - 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y + 1].isAlive) {
+				neighbors++;
+			}
+		} else if(cells[x][y].getY() == 0) {
+			
+			if(cells[x - 1][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y - 1].isAlive) {
+				neighbors++;
+			}
+		} else {
+
+			if (cells[x - 1][y - 1].isAlive) {
+				neighbors++;
+			}else if(cells[x - 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y + 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x][y - 1].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x + 1][y].isAlive) {
+				neighbors++;
+			}
+			else if(cells[x - 1][y].isAlive) {
+				neighbors++;
+			}
+		}
+			
+		
+		
+		
+			
+			
+		return neighbors;
 	}
 
 	@Override
@@ -118,7 +289,12 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 		//10. Use e.getX() and e.getY() to determine
 		//    which cell is clicked. Then toggle
 		//    the isAlive variable for that cell.
-		
+		if (cells[e.getX()][e.getY()].isAlive) {
+			cells[e.getX()][e.getY()].isAlive = false;
+		} else {
+			cells[e.getX()][e.getY()].isAlive = true;
+		}
+			
 		
 		
 		
