@@ -30,8 +30,7 @@ public class Cell implements Drawable{
 	public void liveOrDie(int numNeighbors) {
 		if (isAlive == true && numNeighbors < 2) {
 			isAlive = false;
-		}else if (isAlive == true && (numNeighbors == 2 || numNeighbors == 3)) {
-			isAlive = true;
+	
 		} else if (isAlive == true && numNeighbors > 3) {
 			isAlive = false;
 		} else if(isAlive == false && numNeighbors == 3) {
@@ -41,11 +40,11 @@ public class Cell implements Drawable{
 	}
 	
 	public int getX() {
-		return x;
+		return this.x;
 	}
 
 	public int getY() {
-		return y;
+		return this.y;
 	}
 	
 	//12. Complete the draw method.
@@ -55,10 +54,10 @@ public class Cell implements Drawable{
 	public void draw(Graphics g) {
 		if (isAlive) {
 			g.setColor(Color.RED);
-			g.fillRect(x, y, x * cellSize, y * cellSize);
+			g.fillRect(x, y, cellSize, cellSize);
 		} else {
 			g.setColor(Color.WHITE);
-			g.fillRect(x, y, x * cellSize, y * cellSize);
+			g.fillRect(x, y, cellSize, cellSize);
 		}
 		
 		
